@@ -28,11 +28,15 @@ import educationRoutes from './modules/education/education.routes.js';
 import bannerRoutes from './modules/banner/banner.routes.js';
 import feedRoutes from './modules/feed/feed.routes.js';
 import studentRoutes from './modules/students/student.routes.js';
+import webhookRoutes from './modules/webhook/webhook.routes.js';
 
 const app = express();
 
 // Trust proxy (Hostinger/reverse proxy sets X-Forwarded-For)
 app.set('trust proxy', 1);
+
+// ── Razorpay Webhook — MUST be before body-parser (reads raw body itself) ──
+app.use('/api/v1/webhook', webhookRoutes);
 
 // Security
 app.use(helmet());

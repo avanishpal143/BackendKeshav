@@ -6,7 +6,6 @@ export interface UserRecord {
   name: string;
   mobile: string;
   email?: string;
-  google_id?: string;
   avatar_url?: string;
   role: string;
   blood_group?: string;
@@ -37,18 +36,10 @@ export const authRepository = {
     );
   },
 
-  async findByGoogleId(googleId: string): Promise<UserRecord | null> {
-    return queryOne<UserRecord>(
-      'SELECT * FROM users WHERE google_id = $1',
-      [googleId],
-    );
-  },
-
   async createUser(data: {
     name: string;
     mobile: string;
     email?: string;
-    googleId?: string;
     role?: string;
     district?: string;
     state?: string;
@@ -57,14 +48,13 @@ export const authRepository = {
   }): Promise<UserRecord> {
     const memberId = `CC-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
     const rows = await query<UserRecord>(
-      `INSERT INTO users (id, name, mobile, email, google_id, role, district, state, blood_group, member_id, is_verified)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+      `INSERT INTO users (id, name, mobile, email, role, district, state, blood_group, member_id, is_verified)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
       [
         uuidv4(),
         data.name,
         data.mobile,
         data.email ?? null,
-        data.googleId ?? null,
         data.role ?? 'user',
         data.district ?? null,
         data.state ?? null,
